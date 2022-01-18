@@ -10,7 +10,7 @@ const prefix = config.prefix;
 const token = config.token;
 
 async function gode(text){
-    const promise = axios.get(`https://api.guntxjakka.me/api/v1/getans?phrase=${text}`);
+    const promise = axios.get(encodeURI(`https://api.guntxjakka.me/api/v1/getans?phrase=${text}`));
     const dataPromise = promise.then((response) => response.data);
     return dataPromise;
 }
@@ -26,8 +26,24 @@ client.on("messageCreate", message => {
     if (message.content.includes("@here") || message.content.includes("@everyone") || message.type == "REPLY") return;
 
     if (message.mentions.has(client.user.id)) {
-        message.channel.send(`>>> **Command** \n **${prefix}gode** <text> \n returns converted phrase`);
-    }
+        let mention = `<@!${client.user.id}>`;
+        let args = message.content.slice(mention.length).trim().split(/ +/g);
+        let text = args.join(" ")
+        if (text !== ''){
+            gode(text)
+            .then(response => {
+                let log = `[${message.guild.name}] ${message.author.tag} original: ${message.content} res: ${response.results}`
+                console.log(log.replace(mention, '@bot'))
+                message.channel.send(`Results: ${response.results}`)})
+            .catch(err => {
+                message.channel.send("Error");
+                console.log(err)});
+        }
+        else {
+            message.channel.send(`>>> **Command** \n **${prefix}gode** <text> \n returns converted phrase`);
+        }
+
+    } 
 
     if (message.content.indexOf(prefix) !== 0) return;
   
@@ -37,13 +53,14 @@ client.on("messageCreate", message => {
     if (command === 'help'){
         message.channel.send(`>>> **Command** \n **${prefix}gode** <text> \n returns converted phrase`);
     }
-    if(command === 'gode'){
+    if(command === 'gode' || command === 'g;ode' || command === 'g'){
         let text = args.join(" ");
         if(text === ""){
             message.channel.send("Enter the text first!");
         } else {
             gode(text)
             .then(response => {
+                let log = `[${message.guild.name}] ${message.author.tag} original: ${message.content} res: ${response.results}`
                 message.channel.send(`Results: ${response.results}`)})
             .catch(err => {
                 message.channel.send("Error");

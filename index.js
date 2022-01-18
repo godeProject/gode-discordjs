@@ -22,13 +22,20 @@ client.on("ready", () => {
 
 client.on("messageCreate", message => {
     if (message.author.bot) return;
+
+    if (message.content.includes("@here") || message.content.includes("@everyone") || message.type == "REPLY") return;
+
+    if (message.mentions.has(client.user.id)) {
+        message.channel.send(`>>> **Command** \n **${prefix}gode** <text> \n returns converted phrase`);
+    }
+
     if (message.content.indexOf(prefix) !== 0) return;
   
     const args = message.content.slice(prefix.length).trim().split(/ +/g);
     const command = args.shift().toLowerCase();
 
     if (command === 'help'){
-        message.channel.send(">>> **Command** \n - **gode** <text> \n returns converted phrase");
+        message.channel.send(`>>> **Command** \n **${prefix}gode** <text> \n returns converted phrase`);
     }
     if(command === 'gode'){
         let text = args.join(" ");

@@ -23,9 +23,25 @@ client.on("ready", () => {
 client.on("messageCreate", message => {
     if (message.author.bot) return;
 
-    if (message.content.includes("@here") || message.content.includes("@everyone") || message.type == "REPLY") return;
+    if (message.content.includes("@here") || message.content.includes("@everyone")) return;
+    
+    if (message.type == 'REPLY' && message.mentions.has(client.user.id)){
+        message.fetchReference()
+        .then(originalMsg => {
+            if (originalMsg.author.bot) return;
+            let text = originalMsg.content;
+            gode(text)
+            .then(response => {
+                console.log(`[${originalMsg.guild.name}] ${originalMsg.author.username} said: ${response.results}`);
+                message.channel.send(`${originalMsg.author.username} said: ${response.results}`)})
+            .catch(err => {
+                message.channel.send("Error");
+                console.log(err)});
+        })
+    }
+        
 
-    if (message.mentions.has(client.user.id)) {
+    if (message.mentions.has(client.user.id) && message.type !== 'REPLY') {
         let mention = `<@!${client.user.id}>`;
         let args = message.content.slice(mention.length).trim().split(/ +/g);
         let text = args.join(" ")
@@ -61,6 +77,7 @@ client.on("messageCreate", message => {
             gode(text)
             .then(response => {
                 let log = `[${message.guild.name}] ${message.author.tag} original: ${message.content} res: ${response.results}`
+                console.log(log);
                 message.channel.send(`Results: ${response.results}`)})
             .catch(err => {
                 message.channel.send("Error");

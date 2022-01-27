@@ -8,6 +8,10 @@ Discord bot for QWERTY/Kedmanee Thai user that forgot to switch their keyboard l
 
 ## Usage
 
+**New** Mention bot in the message you want to convert.
+
+![image](https://cdn.discordapp.com/attachments/935335761291649124/936092381474848788/unknown.png)
+
 ``!gode {params}``
 
 *alias: g, g;ode*

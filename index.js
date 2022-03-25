@@ -1,7 +1,7 @@
 const fs = require('fs');
 const toml = require('toml');
 const { Client, Intents } = require("discord.js");
-const gode = require('gode.js')
+const godejs = require('gode.js')
 const client = new Client({
     intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES]
 });
@@ -10,7 +10,7 @@ const prefix = config.prefix;
 const token = config.token;
 
 async function gode(text) {
-    let ans = gode.convert(text)
+    let ans = godejs.convert(text)
     return ans
 }
 

@@ -9,7 +9,7 @@ const config = toml.parse(fs.readFileSync('./config.toml', 'utf-8'));
 const prefix = config.prefix;
 const token = config.token;
 
-async function gode(text) {
+function gode(text) {
     let ans = godejs.convert(text)
     return ans
 }

@@ -29,7 +29,7 @@ client.on("messageCreate", message => {
             .then(originalMsg => {
                 if (originalMsg.author.bot) return;
                 let text = originalMsg.content;
-                let ans = gode.qwkm(text)
+                let ans = gode(text)
                 try{
                     console.log(`[${originalMsg.guild.name}] ${originalMsg.author.username} said: ${ans}`);
                     message.channel.send(`${originalMsg.author.username} said: ${ans}`)
@@ -46,7 +46,7 @@ client.on("messageCreate", message => {
         let args = message.content.slice(mention.length).trim().split(/ +/g);
         let text = args.join(" ")
         if (text !== '') {
-            let ans = gode.qwkm(text)
+            let ans = gode(text)
             let log = `[${message.guild.name}] ${message.author.tag} original: ${message.content} res: ${ans}`
             console.log(log.replace(mention, '@bot'))
             message.channel.send(`Results: ${ans}`)
@@ -70,7 +70,7 @@ client.on("messageCreate", message => {
         if (text === "") {
             message.channel.send("Enter the text first!");
         } else {
-            let ans = gode.qwkm(text)
+            let ans = gode(text)
             let log = `[${message.guild.name}] ${message.author.tag} original: ${message.content} res: ${ans}`
             console.log(log)
             message.channel.send(`Results: ${ans}`)

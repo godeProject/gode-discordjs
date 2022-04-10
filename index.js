@@ -10,7 +10,7 @@ const prefix = config.prefix;
 const token = config.token;
 
 function gode(text) {
-    let ans = godejs.convert(text)
+    let ans = godejs.convert(text, "QWERTY", "Kedmanee")
     return ans
 }
 

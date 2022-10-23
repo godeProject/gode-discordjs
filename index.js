@@ -1,30 +1,37 @@
 const fs = require('fs');
 const toml = require('toml');
-const { Client, Intents } = require("discord.js");
+const { Client, Events, GatewayIntentBits, ActivityType, MessageType } = require('discord.js');
 const godejs = require('gode.js')
 const client = new Client({
-    intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES]
+    intents: [
+		GatewayIntentBits.Guilds,
+		GatewayIntentBits.GuildMessages,
+		GatewayIntentBits.MessageContent,
+		GatewayIntentBits.GuildMembers,
+	],
 });
 const config = toml.parse(fs.readFileSync('./config.toml', 'utf-8'));
 const prefix = config.prefix;
 const token = config.token;
 
 function gode(text) {
-    let ans = godejs.convert("QWERTY", "Kedmanee", text)
-    return ans
+    return godejs.convert("QWERTY", "Kedmanee", text)
 }
 
-client.on("ready", () => {
-    client.user.setActivity("gode.app", { type: 'WATCHING' });
+client.on(Events.ClientReady, (c) => {
+    client.user.setPresence({
+		activities: [{name: "gode.app", type: ActivityType.Watching}],
+		status: 'available'
+	});
     console.log(`Logged in. I'm ${client.user.tag}!`);
 });
 
-client.on("messageCreate", message => {
+client.on(Events.MessageCreate, message => {
     if (message.author.bot) return;
 
     if (message.content.includes("@here") || message.content.includes("@everyone")) return;
 
-    if (message.type == 'REPLY' && message.mentions.has(client.user.id)) {
+    if (message.type == MessageType.Reply && message.mentions.has(client.user.id)) {
         message.fetchReference()
             .then(originalMsg => {
                 if (originalMsg.author.bot) return;
@@ -35,13 +42,13 @@ client.on("messageCreate", message => {
                     message.channel.send(`${originalMsg.author.username} said: ${ans}`)
                 }
                 catch {
-                    message.channel.send("Error");
+                    message.reply("Error");
                 }
             })
     }
 
 
-    if (message.mentions.has(client.user.id) && message.type !== 'REPLY') {
+    if (message.mentions.has(client.user.id) && message.type !== MessageType.Reply) {
         let mention = `<@!${client.user.id}>`;
         let args = message.content.slice(mention.length).trim().split(/ +/g);
         let text = args.join(" ")
@@ -49,10 +56,10 @@ client.on("messageCreate", message => {
             let ans = gode(text)
             let log = `[${message.guild.name}] ${message.author.tag} original: ${message.content} res: ${ans}`
             console.log(log.replace(mention, '@bot'))
-            message.channel.send(`Results: ${ans}`)
+            message.reply(`Results: ${ans}`)
         }
         else {
-            message.channel.send(`>>> **Command** \n **${prefix}gode** <text> \n returns converted phrase`);
+            message.reply(`>>> **Command** \n **${prefix}gode** <text> \n returns converted phrase`);
         }
 
     }
@@ -63,17 +70,17 @@ client.on("messageCreate", message => {
     const command = args.shift().toLowerCase();
 
     if (command === 'help') {
-        message.channel.send(`>>> **Command** \n **${prefix}gode** <text> \n returns converted phrase`);
+        message.reply(`>>> **Command** \n **${prefix}gode** <text> \n returns converted phrase`);
     }
     if (command === 'gode' || command === 'g;ode' || command === 'g') {
         let text = args.join(" ");
         if (text === "") {
-            message.channel.send("Enter the text first!");
+            message.reply("Enter the text first!");
         } else {
             let ans = gode(text)
             let log = `[${message.guild.name}] ${message.author.tag} original: ${message.content} res: ${ans}`
             console.log(log)
-            message.channel.send(`Results: ${ans}`)
+            message.reply(`Results: ${ans}`)
         }
     }
 });
